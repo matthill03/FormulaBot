@@ -48,7 +48,7 @@ namespace FormulaBot
 
             Commands = Client.UseCommandsNext(commandsConfig);
 
-            Commands.RegisterCommands<FunCommands>();
+            Commands.RegisterCommands<Info>();
 
             await Client.ConnectAsync();
 
