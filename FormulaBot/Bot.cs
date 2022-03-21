@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using FormulaBot.Commands;
 
 namespace FormulaBot
 {
@@ -41,10 +42,13 @@ namespace FormulaBot
             {
                 StringPrefixes = new string[] { configJson.Prefix },
                 EnableMentionPrefix = true,
-                EnableDms = false
+                EnableDms = false,
+                DmHelp = true
             };
 
             Commands = Client.UseCommandsNext(commandsConfig);
+
+            Commands.RegisterCommands<FunCommands>();
 
             await Client.ConnectAsync();
 
