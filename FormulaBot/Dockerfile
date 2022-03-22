@@ -12,5 +12,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
 COPY --from=build-env /app/out .
 
-COPY bin/Debug/net5.0/config.json ./
+COPY config.json ./
 ENTRYPOINT ["dotnet", "FormulaBot.dll"]
