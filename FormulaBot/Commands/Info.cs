@@ -22,19 +22,14 @@ namespace FormulaBot.Commands
             if (response.Content != null)
             {
                 Console.WriteLine(JObject.Parse(response.Content));
-                var driverList = "```";
-                var counter = 0;
+                var driverList = "";
                 var data = JsonConvert.DeserializeObject<Root>(response.Content);
-                var max = data.MRData.DriverTable.Drivers.Count();
                 foreach (Driver driver in data.MRData.DriverTable.Drivers)
                 {
                     driverList += driver.givenName + " " + driver.familyName + "\n";
-                    counter++;
-                    if (counter == max)
-                        driverList += "```";
                 }
 
-                await ctx.Channel.SendMessageAsync(driverList).ConfigureAwait(false);
+                await ctx.Channel.SendMessageAsync("```" + driverList + "```").ConfigureAwait(false);
             }
             else
             {
