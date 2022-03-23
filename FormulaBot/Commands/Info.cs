@@ -1,6 +1,7 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Threading.Tasks;
@@ -17,13 +18,15 @@ namespace FormulaBot.Commands
             var request = new RestRequest(uri, Method.Get);
             var response = client.ExecuteAsync(request).Result;
 
+            Console.WriteLine(JObject.Parse(response.Content));
+
             if (response.Content != null)
             {
-                var driverList = "";
+                var driverList = $"List of drivers from the {year} season\n\n";
                 var data = JsonConvert.DeserializeObject<Root>(response.Content);
                 foreach (Driver driver in data.MRData.DriverTable.Drivers)
                 {
-                    driverList += $"{driver.givenName} {driver.familyName} \n";
+                    driverList += $"Name: {driver.givenName} {driver.familyName} \nNumber: {driver.permanentNumber} \nDOB: {driver.dateOfBirth} \nCode: {driver.code} \n=======> \n\n";
                 }
 
                 await ctx.Channel.SendMessageAsync("```" + driverList + "```").ConfigureAwait(false);
