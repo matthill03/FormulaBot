@@ -130,7 +130,7 @@ namespace FormulaBot.Commands
             var response = client.ExecuteAsync(request).Result;
 
             var data = JsonConvert.DeserializeObject<Root>(response.Content);
-            var standingString = $"Constructor championship standings of {year}";
+            var standingString = $"Constructor championship standings of {year}\n\n";
 
             foreach (StandingsList standingList in data.MRData.StandingsTable.StandingsLists)
             {
