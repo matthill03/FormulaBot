@@ -18,6 +18,11 @@ namespace FormulaBot
         public string circuitName { get; set; }
         public Location Location { get; set; }
     }
+    public class CircuitTable
+    {
+        public string season { get; set; }
+        public List<Circuit> Circuits { get; set; }
+    }
 
     public class Constructor
     {
@@ -84,8 +89,34 @@ namespace FormulaBot
     public class RaceTable
     {
         public string season { get; set; }
-        public string round { get; set; }
         public List<Race> Races { get; set; }
+    }
+    public class FirstPractice
+    {
+        public string date { get; set; }
+        public string time { get; set; }
+    }
+
+    public class SecondPractice
+    {
+        public string date { get; set; }
+        public string time { get; set; }
+    }
+
+    public class ThirdPractice
+    {
+        public string date { get; set; }
+        public string time { get; set; }
+    }
+    public class Qualifying
+    {
+        public string date { get; set; }
+        public string time { get; set; }
+    }
+    public class Sprint
+    {
+        public string date { get; set; }
+        public string time { get; set; }
     }
 
     public class Race
@@ -97,6 +128,11 @@ namespace FormulaBot
         public Circuit Circuit { get; set; }
         public string date { get; set; }
         public string time { get; set; }
+        public FirstPractice FirstPractice { get; set; }
+        public SecondPractice SecondPractice { get; set; }
+        public ThirdPractice ThirdPractice { get; set; }
+        public Qualifying Qualifying { get; set; }
+        public Sprint Sprint { get; set; }
         public List<Result> Results { get; set; }
         public List<QualifyingResult> QualifyingResults { get; set; }
     }
@@ -162,6 +198,7 @@ namespace FormulaBot
         public RaceTable RaceTable { get; set; }
         public StandingsTable StandingsTable { get; set; }
         public ConstructorTable ConstructorTable { get; set; }
+        public CircuitTable CircuitTable { get; set; }
     }
 
     public class Root
