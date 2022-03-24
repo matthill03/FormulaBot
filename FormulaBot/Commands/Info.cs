@@ -10,13 +10,20 @@ namespace FormulaBot.Commands
 {
     public class Info : BaseCommandModule
     {
-        [Command("driverlist")]
-        public async Task GetCurrentDriverList(CommandContext ctx)
+        private RestResponse GetRestResponse(string inputUri)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/current/drivers.json");
+            var uri = new Uri(inputUri);
             var client = new RestClient();
             var request = new RestRequest(uri, Method.Get);
             var response = client.ExecuteAsync(request).Result;
+
+            return response;
+        }
+
+        [Command("driverlist")]
+        public async Task GetCurrentDriverList(CommandContext ctx)
+        {
+            var response = GetRestResponse($"http://ergast.com/api/f1/current/drivers.json");
 
             if (response.Content != null)
             {
@@ -39,10 +46,7 @@ namespace FormulaBot.Commands
 
         public async Task GetAnyDriverListYear(CommandContext ctx, int year)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/{year}/drivers.json");
-            var client = new RestClient();
-            var request = new RestRequest(uri, Method.Get);
-            var response = client.ExecuteAsync(request).Result;
+            var response = GetRestResponse($"http://ergast.com/api/f1/{year}/drivers.json");
 
             if (response.Content != null)
             {
@@ -64,10 +68,7 @@ namespace FormulaBot.Commands
         [Command("constructorlist")]
         public async Task GetCurrentConstructorList(CommandContext ctx)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/current/constructors.json");
-            var client = new RestClient();
-            var request = new RestRequest(uri, Method.Get);
-            var response = client.ExecuteAsync(request).Result;
+            var response = GetRestResponse($"http://ergast.com/api/f1/current/constructors.json");
 
             if (response.Content != null)
             {
@@ -89,10 +90,7 @@ namespace FormulaBot.Commands
         [Command("constructorlist")]
         public async Task GetAnyConstructorList(CommandContext ctx, int year)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/{year}/constructors.json");
-            var client = new RestClient();
-            var request = new RestRequest(uri, Method.Get);
-            var response = client.ExecuteAsync(request).Result;
+            var response = GetRestResponse($"http://ergast.com/api/f1/{year}/constructors.json");
 
             if (response.Content != null)
             {
@@ -114,10 +112,7 @@ namespace FormulaBot.Commands
         [Command("racelist")]
         public async Task GetCurrentRaceList(CommandContext ctx)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/current.json");
-            var client = new RestClient();
-            var request = new RestRequest(uri, Method.Get);
-            var response = client.ExecuteAsync(request).Result;
+            var response = GetRestResponse($"http://ergast.com/api/f1/current.json");
 
             if (response.Content != null)
             {
@@ -140,10 +135,7 @@ namespace FormulaBot.Commands
         [Command("racelist")]
         public async Task GetAnyRaceList(CommandContext ctx, int year)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/{year}.json");
-            var client = new RestClient();
-            var request = new RestRequest(uri, Method.Get);
-            var response = client.ExecuteAsync(request).Result;
+            var response = GetRestResponse($"http://ergast.com/api/f1/{year}.json");
 
             if (response.Content != null)
             {
@@ -166,10 +158,7 @@ namespace FormulaBot.Commands
         [Command("raceresult")]
         public async Task GetLastRaceResults(CommandContext ctx)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/current/last/results.json");
-            var client = new RestClient();
-            var request = new RestRequest(uri, Method.Get);
-            var response = client.ExecuteAsync(request).Result;
+            var response = GetRestResponse($"http://ergast.com/api/f1/current/last/results.json");
 
             if (response.Content != null)
             {
@@ -197,10 +186,7 @@ namespace FormulaBot.Commands
         [Command("raceresult")]
         public async Task GetAnyRaceResults(CommandContext ctx, int year, int round)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/{year}/{round}/results.json");
-            var client = new RestClient();
-            var request = new RestRequest(uri, Method.Get);
-            var response = client.ExecuteAsync(request).Result;
+            var response = GetRestResponse($"http://ergast.com/api/f1/{year}/{round}/results.json");
 
             var RaceList = "";
             var circuitString = "";
@@ -229,10 +215,7 @@ namespace FormulaBot.Commands
         [Command("driverstandings")]
         public async Task GetCurrentDriverStandings(CommandContext ctx)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/current/driverStandings.json");
-            var client = new RestClient();
-            var request = new RestRequest(uri, Method.Get);
-            var response = client.ExecuteAsync(request).Result;
+            var response = GetRestResponse($"http://ergast.com/api/f1/current/driverStandings.json");
 
             var data = JsonConvert.DeserializeObject<Root>(response.Content);
             var standingString = $"Current Drivers Championship Standings\n\n";
@@ -251,10 +234,7 @@ namespace FormulaBot.Commands
         [Command("constructorstanding")]
         public async Task GetCurrentConstructorStanding(CommandContext ctx)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/current/constructorStandings.json");
-            var client = new RestClient();
-            var request = new RestRequest(uri, Method.Get);
-            var response = client.ExecuteAsync(request).Result;
+            var response = GetRestResponse($"http://ergast.com/api/f1/current/constructorStandings.json");
 
             var data = JsonConvert.DeserializeObject<Root>(response.Content);
             var standingString = $"Current Constructor Championship Standing\n\n";
@@ -273,10 +253,7 @@ namespace FormulaBot.Commands
         [Command("driverchamp")]
         public async Task GetSeasonResultDriver(CommandContext ctx, int year)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/{year}/driverStandings.json");
-            var client = new RestClient();
-            var request = new RestRequest(uri, Method.Get);
-            var response = client.ExecuteAsync(request).Result;
+            var response = GetRestResponse($"http://ergast.com/api/f1/{year}/driverStandings.json");
 
             var data = JsonConvert.DeserializeObject<Root>(response.Content);
             var standingString = $"Drivers Championship standings of {year}\n\n";
@@ -296,10 +273,7 @@ namespace FormulaBot.Commands
         [Command("constructorchamp")]
         public async Task GetSeasonResultConstructor(CommandContext ctx, int year)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/{year}/constructorStandings.json");
-            var client = new RestClient();
-            var request = new RestRequest(uri, Method.Get);
-            var response = client.ExecuteAsync(request).Result;
+            var response = GetRestResponse($"http://ergast.com/api/f1/{year}/constructorStandings.json");
 
             var data = JsonConvert.DeserializeObject<Root>(response.Content);
             var standingString = $"Constructor championship standings of {year}\n\n";
@@ -319,10 +293,7 @@ namespace FormulaBot.Commands
         [Command("qualifyresult")]
         public async Task GetQualifyingResult(CommandContext ctx, int year, int round)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/{year}/{round}/qualifying.json");
-            var client = new RestClient();
-            var request = new RestRequest(uri, Method.Get);
-            var response = client.ExecuteAsync(request).Result;
+            var response = GetRestResponse($"http://ergast.com/api/f1/{year}/{round}/qualifying.json");
 
             var qualyList = "";
             var circuitString = "";
