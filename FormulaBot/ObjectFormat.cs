@@ -26,6 +26,12 @@ namespace FormulaBot
         public string name { get; set; }
         public string nationality { get; set; }
     }
+    
+    public class ConstructorTable
+    {
+        public string season { get; set; }
+        public List<Constructor> Constructors { get; set; }
+    }
 
     public class QualifyingResult
     {
@@ -155,6 +161,7 @@ namespace FormulaBot
         public DriverTable DriverTable { get; set; }
         public RaceTable RaceTable { get; set; }
         public StandingsTable StandingsTable { get; set; }
+        public ConstructorTable ConstructorTable { get; set; }
     }
 
     public class Root
