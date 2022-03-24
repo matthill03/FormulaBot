@@ -11,7 +11,34 @@ namespace FormulaBot.Commands
     public class Info : BaseCommandModule
     {
         [Command("driverlist")]
-        public async Task GetDriverList(CommandContext ctx, int year)
+        public async Task GetCurrentDriverList(CommandContext ctx)
+        {
+            var uri = new Uri($"http://ergast.com/api/f1/{DateTime.Now.Year}/drivers.json");
+            var client = new RestClient();
+            var request = new RestRequest(uri, Method.Get);
+            var response = client.ExecuteAsync(request).Result;
+
+            Console.WriteLine(JObject.Parse(response.Content));
+
+            if (response.Content != null)
+            {
+                var driverList = $"List of drivers from the current season\n\n";
+                var data = JsonConvert.DeserializeObject<Root>(response.Content);
+                foreach (Driver driver in data.MRData.DriverTable.Drivers)
+                {
+                    driverList += $"Name: {driver.givenName} {driver.familyName} \nNumber: {driver.permanentNumber} \nDOB: {driver.dateOfBirth} \nCode: {driver.code} \n=======> \n\n";
+                }
+
+                await ctx.Channel.SendMessageAsync("```" + driverList + "```").ConfigureAwait(false);
+            }
+            else
+            {
+                Console.WriteLine("Error");
+            }
+        }
+
+        [Command("driverlist")]
+        public async Task GetAnyDriverListYear(CommandContext ctx, int year)
         {
             var uri = new Uri($"http://ergast.com/api/f1/{year}/drivers.json");
             var client = new RestClient();
@@ -30,6 +57,60 @@ namespace FormulaBot.Commands
                 }
 
                 await ctx.Channel.SendMessageAsync("```" + driverList + "```").ConfigureAwait(false);
+            }
+            else
+            {
+                Console.WriteLine("Error");
+            }
+        }
+
+        [Command("constructorlist")]
+        public async Task GetCurrentConstructorList(CommandContext ctx)
+        {
+            var uri = new Uri($"http://ergast.com/api/f1/constructors.json");
+            var client = new RestClient();
+            var request = new RestRequest(uri, Method.Get);
+            var response = client.ExecuteAsync(request).Result;
+
+            Console.WriteLine(JObject.Parse(response.Content));
+
+            if (response.Content != null)
+            {
+                var constructorList = $"List of constructors from the current season\n\n";
+                var data = JsonConvert.DeserializeObject<Root>(response.Content);
+                foreach (Constructor constructor in data.MRData.ConstructorTable.Constructors)
+                {
+                    constructorList += $"Name: {constructor.name} \nNationality: {constructor.nationality} \n=======> \n\n";
+                }
+
+                await ctx.Channel.SendMessageAsync("```" + constructorList + "```").ConfigureAwait(false);
+            }
+            else
+            {
+                Console.WriteLine("Error");
+            }
+        }
+
+        [Command("constructorlist")]
+        public async Task GetAnyConstructorList(CommandContext ctx, int year)
+        {
+            var uri = new Uri($"http://ergast.com/api/f1/{year}/constructors.json");
+            var client = new RestClient();
+            var request = new RestRequest(uri, Method.Get);
+            var response = client.ExecuteAsync(request).Result;
+
+            Console.WriteLine(JObject.Parse(response.Content));
+
+            if (response.Content != null)
+            {
+                var constructorList = $"List of constructors from the {year} season\n\n";
+                var data = JsonConvert.DeserializeObject<Root>(response.Content);
+                foreach (Constructor constructor in data.MRData.ConstructorTable.Constructors)
+                {
+                    constructorList += $"Name: {constructor.name} \nNationality: {constructor.nationality} \n=======> \n\n";
+                }
+
+                await ctx.Channel.SendMessageAsync("```" + constructorList + "```").ConfigureAwait(false);
             }
             else
             {
@@ -69,7 +150,7 @@ namespace FormulaBot.Commands
         }
 
         [Command("raceresult")]
-        public async Task GetAnyRaceResults(CommandContext ctx, int? year, int? round)
+        public async Task GetAnyRaceResults(CommandContext ctx, int year, int round)
         {
             var uri = new Uri($"http://ergast.com/api/f1/{year}/{round}/results.json");
             
