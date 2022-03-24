@@ -13,12 +13,10 @@ namespace FormulaBot.Commands
         [Command("driverlist")]
         public async Task GetCurrentDriverList(CommandContext ctx)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/{DateTime.Now.Year}/drivers.json");
+            var uri = new Uri($"http://ergast.com/api/f1/current/drivers.json");
             var client = new RestClient();
             var request = new RestRequest(uri, Method.Get);
             var response = client.ExecuteAsync(request).Result;
-
-            Console.WriteLine(JObject.Parse(response.Content));
 
             if (response.Content != null)
             {
@@ -38,14 +36,13 @@ namespace FormulaBot.Commands
         }
 
         [Command("driverlist")]
+
         public async Task GetAnyDriverListYear(CommandContext ctx, int year)
         {
             var uri = new Uri($"http://ergast.com/api/f1/{year}/drivers.json");
             var client = new RestClient();
             var request = new RestRequest(uri, Method.Get);
             var response = client.ExecuteAsync(request).Result;
-
-            Console.WriteLine(JObject.Parse(response.Content));
 
             if (response.Content != null)
             {
@@ -67,12 +64,10 @@ namespace FormulaBot.Commands
         [Command("constructorlist")]
         public async Task GetCurrentConstructorList(CommandContext ctx)
         {
-            var uri = new Uri($"http://ergast.com/api/f1/constructors.json");
+            var uri = new Uri($"http://ergast.com/api/f1/current/constructors.json");
             var client = new RestClient();
             var request = new RestRequest(uri, Method.Get);
             var response = client.ExecuteAsync(request).Result;
-
-            Console.WriteLine(JObject.Parse(response.Content));
 
             if (response.Content != null)
             {
@@ -99,8 +94,6 @@ namespace FormulaBot.Commands
             var request = new RestRequest(uri, Method.Get);
             var response = client.ExecuteAsync(request).Result;
 
-            Console.WriteLine(JObject.Parse(response.Content));
-
             if (response.Content != null)
             {
                 var constructorList = $"List of constructors from the {year} season\n\n";
@@ -111,6 +104,58 @@ namespace FormulaBot.Commands
                 }
 
                 await ctx.Channel.SendMessageAsync("```" + constructorList + "```").ConfigureAwait(false);
+            }
+            else
+            {
+                Console.WriteLine("Error");
+            }
+        }
+
+        [Command("racelist")]
+        public async Task GetCurrentRaceList(CommandContext ctx)
+        {
+            var uri = new Uri($"http://ergast.com/api/f1/current.json");
+            var client = new RestClient();
+            var request = new RestRequest(uri, Method.Get);
+            var response = client.ExecuteAsync(request).Result;
+
+            if (response.Content != null)
+            {
+                var scheduleList = "";
+                var data = JsonConvert.DeserializeObject<Root>(response.Content);
+                foreach (Race race in data.MRData.RaceTable.Races)
+                {
+                    scheduleList += $"Name: {race.Circuit.circuitName} \nRound: {race.round} \nLocation: {race.Circuit.Location.country} \nDate: {race.date} \n=======> \n\n";
+
+                }
+
+                await ctx.Channel.SendMessageAsync("```" + scheduleList + "```").ConfigureAwait(false);
+            }
+            else
+            {
+                Console.WriteLine("Error");
+            }
+        }
+
+        [Command("racelist")]
+        public async Task GetAnyRaceList(CommandContext ctx, int year)
+        {
+            var uri = new Uri($"http://ergast.com/api/f1/{year}.json");
+            var client = new RestClient();
+            var request = new RestRequest(uri, Method.Get);
+            var response = client.ExecuteAsync(request).Result;
+
+            if (response.Content != null)
+            {
+                var scheduleList = "";
+                var data = JsonConvert.DeserializeObject<Root>(response.Content);
+                foreach (Race race in data.MRData.RaceTable.Races)
+                {
+                    scheduleList += $"Name: {race.Circuit.circuitName} \nLocation: {race.Circuit.Location.country} \nRound: {race.round} \nDate: {race.date} \n=======> \n\n";
+
+                }
+
+                await ctx.Channel.SendMessageAsync("```" + scheduleList + "```").ConfigureAwait(false);
             }
             else
             {
@@ -153,7 +198,6 @@ namespace FormulaBot.Commands
         public async Task GetAnyRaceResults(CommandContext ctx, int year, int round)
         {
             var uri = new Uri($"http://ergast.com/api/f1/{year}/{round}/results.json");
-            
             var client = new RestClient();
             var request = new RestRequest(uri, Method.Get);
             var response = client.ExecuteAsync(request).Result;
@@ -180,6 +224,50 @@ namespace FormulaBot.Commands
             {
                 Console.WriteLine("Error");
             }
+        }
+
+        [Command("driverstandings")]
+        public async Task GetCurrentDriverStandings(CommandContext ctx)
+        {
+            var uri = new Uri($"http://ergast.com/api/f1/current/driverStandings.json");
+            var client = new RestClient();
+            var request = new RestRequest(uri, Method.Get);
+            var response = client.ExecuteAsync(request).Result;
+
+            var data = JsonConvert.DeserializeObject<Root>(response.Content);
+            var standingString = $"Current Drivers Championship Standings\n\n";
+
+            foreach (StandingsList standingList in data.MRData.StandingsTable.StandingsLists)
+            {
+                foreach (DriverStanding driverStanding in standingList.DriverStandings)
+                {
+                    standingString += $"Driver: {driverStanding.Driver.givenName} {driverStanding.Driver.familyName}\nPosition: {driverStanding.position} \nPoints: {driverStanding.points} \nWins: {driverStanding.wins} \n=======> \n\n";
+                }
+            }
+
+            await ctx.Channel.SendMessageAsync("```" + standingString + "```").ConfigureAwait(false);
+        }
+
+        [Command("constructorstanding")]
+        public async Task GetCurrentConstructorStanding(CommandContext ctx)
+        {
+            var uri = new Uri($"http://ergast.com/api/f1/current/constructorStandings.json");
+            var client = new RestClient();
+            var request = new RestRequest(uri, Method.Get);
+            var response = client.ExecuteAsync(request).Result;
+
+            var data = JsonConvert.DeserializeObject<Root>(response.Content);
+            var standingString = $"Current Constructor Championship Standing\n\n";
+
+            foreach (StandingsList standingList in data.MRData.StandingsTable.StandingsLists)
+            {
+                foreach (ConstructorStanding constructorStanding in standingList.ConstructorStandings)
+                {
+                    standingString += $"Position: {constructorStanding.position} \nConstructor: {constructorStanding.Constructor.name} \nPoints: {constructorStanding.points} \nWins: {constructorStanding.wins} \n=======> \n\n";
+                }
+            }
+
+            await ctx.Channel.SendMessageAsync("```" + standingString + "```").ConfigureAwait(false);
         }
 
         [Command("driverchamp")]
