@@ -120,7 +120,7 @@ namespace FormulaBot.Commands
                 var data = JsonConvert.DeserializeObject<Root>(response.Content);
                 foreach (Race race in data.MRData.RaceTable.Races)
                 {
-                    scheduleList += $"Name: {race.Circuit.circuitName} \nRound: {race.round} \nLocation: {race.Circuit.Location.country} \nDate: {race.date} \n=======> \n\n";
+                    scheduleList += $"Name: {race.Circuit.circuitName} \nLocation: {race.Circuit.Location.country} \nRound: {race.round} \nDate: {race.date} \n=======> \n\n";
 
                 }
 
