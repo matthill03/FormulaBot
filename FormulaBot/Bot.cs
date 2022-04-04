@@ -3,8 +3,11 @@ using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.Interactivity;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
+using DSharpPlus.Interactivity.Extensions;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using FormulaBot.Commands;
@@ -38,6 +41,12 @@ namespace FormulaBot
 
             Client.Ready += OnClientReady;
 
+            Client.UseInteractivity(new InteractivityConfiguration()
+            {
+                Timeout = TimeSpan.FromSeconds(30)
+            });
+            
+
             var commandsConfig = new CommandsNextConfiguration
             {
                 StringPrefixes = new string[] { configJson.Prefix },
@@ -48,7 +57,8 @@ namespace FormulaBot
 
             Commands = Client.UseCommandsNext(commandsConfig);
 
-            Commands.RegisterCommands<Info>();
+            Commands.RegisterCommands<InfoCommands>();
+            Commands.RegisterCommands<TriviaCommands>();
 
             await Client.ConnectAsync();
 
