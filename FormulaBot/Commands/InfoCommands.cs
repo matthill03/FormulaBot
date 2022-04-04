@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FormulaBot.Commands
 {
-    public class Info : BaseCommandModule
+    public class InfoCommands : BaseCommandModule
     {
         private RestResponse GetRestResponse(string inputUri)
         {
